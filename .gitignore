@@ -45,8 +45,6 @@ dist/
 build/
 out/
 
-# OCR training data
-*.traineddata
 
 # Image processing outputs
 *_contrast.png
