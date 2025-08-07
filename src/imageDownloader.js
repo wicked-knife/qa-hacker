@@ -11,6 +11,16 @@ class ImageDownloader {
     ensureCaptchaDir() {
         if (!fs.existsSync(this.captchaDir)) {
             fs.mkdirSync(this.captchaDir, { recursive: true });
+        } else {
+            // 清空目录下所有文件
+            const files = fs.readdirSync(this.captchaDir);
+            for (const file of files) {
+                const filePath = path.join(this.captchaDir, file);
+                if (fs.statSync(filePath).isFile()) {
+                    fs.unlinkSync(filePath);
+                }
+            }
+            console.log('✅ 已清空captcha目录下的文件');
         }
     }
 

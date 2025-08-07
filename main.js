@@ -5,12 +5,14 @@ require('dotenv').config();
 const ImageDownloader = require('./src/imageDownloader');
 const ImageProcessor = require('./src/imageProcess');
 const ImageRecognition = require('./src/imageRecognition');
+const LoginModule = require('./src/loginModule');
 
 class MainProcessor {
     constructor() {
         this.imageDownloader = new ImageDownloader();
         this.imageProcessor = new ImageProcessor();
         this.imageRecognition = new ImageRecognition();
+        this.loginModule = new LoginModule();
     }
 
     async writeUuidToEnv(uuid) {
@@ -77,13 +79,26 @@ class MainProcessor {
                 console.log(`❌ Gemini识别失败: ${error.message}`);
             }
             
+            // 步骤5: 登录系统
+            let loginResult = null;
+            if (geminiResult) {
+                console.log('\n🔐 步骤5: 使用识别结果登录系统...');
+                try {
+                    loginResult = await this.loginModule.login(geminiResult, uuid);
+                    console.log(`✅ 登录成功，Token已保存`);
+                } catch (error) {
+                    console.log(`❌ 登录失败: ${error.message}`);
+                }
+            }
+            
             console.log('\n✅ 流程完成！');
             
             return {
                 uuid: uuid,
                 imagePath: imagePath,
                 invertedPath: processResult.invertedPath,
-                recognitionResult: geminiResult
+                recognitionResult: geminiResult,
+                loginResult: loginResult
             };
             
         } catch (error) {
