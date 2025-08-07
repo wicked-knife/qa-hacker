@@ -12,6 +12,13 @@ class LoginModule {
         // 重新加载环境变量以获取最新值
         require('dotenv').config();
         
+        // 首先检查现有token是否有效
+        const existingToken = await this.checkExistingToken();
+        if (existingToken) {
+            console.log('✅ 使用现有有效token，跳过登录');
+            return existingToken;
+        }
+        
         const username = process.env.QA_USERNAME;
         const password = process.env.QA_PASSWORD;
         
@@ -54,6 +61,45 @@ class LoginModule {
         } catch (error) {
             console.error('❌ 登录失败:', error.message);
             throw error;
+        }
+    }
+
+    async checkExistingToken() {
+        try {
+            const accessToken = process.env.ACCESS_TOKEN;
+            const tokenExpiryTime = process.env.TOKEN_EXPIRY_TIME;
+            
+            if (!accessToken || !tokenExpiryTime) {
+                console.log('📋 未找到现有token或过期时间');
+                return null;
+            }
+            
+            const expiryTimestamp = parseInt(tokenExpiryTime);
+            const currentTime = Date.now();
+            
+            if (isNaN(expiryTimestamp)) {
+                console.log('⚠️ TOKEN_EXPIRY_TIME格式无效');
+                return null;
+            }
+            
+            if (currentTime >= expiryTimestamp) {
+                console.log('⏰ 现有token已过期');
+                return null;
+            }
+            
+            const remainingTime = Math.floor((expiryTimestamp - currentTime) / 1000 / 60);
+            console.log(`🔑 现有token有效，剩余时间: ${remainingTime} 分钟`);
+            
+            return {
+                accessToken,
+                expiryTime: expiryTimestamp,
+                success: true,
+                isExisting: true
+            };
+            
+        } catch (error) {
+            console.error('❌ 检查现有token失败:', error.message);
+            return null;
         }
     }
 

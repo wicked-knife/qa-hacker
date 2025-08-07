@@ -1,0 +1,28 @@
+{
+    "flowDefinitionId": "1651203636039307266",
+    "auditorId": "10178",
+    "message": null,
+    "regionId": "1707248528475746306",
+    "resourceList": [
+        {
+            "ext1": "test",
+            "resourceType": 1,
+            "targetName": "scrm-h5",
+            "targetId": "1788030515233533953"
+        },
+        {
+            "resourceType": 5,
+            "targetName": "冯罡(ZHNX36386)",
+            "targetId": "10178"
+        }
+    ],
+    "submitList": [
+        {
+            "workItemId": "b978305e4560dce82e95f57a34",
+            "subject": "客户池管理新增客群(0724) - 前端",
+            "statusIdentifier": "100005",
+            "workItemType": 2
+        }
+    ],
+    "projectId": "917b68e6f4be67aef40f5643a4"
+}

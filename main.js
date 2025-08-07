@@ -6,6 +6,7 @@ const ImageDownloader = require('./src/imageDownloader');
 const ImageProcessor = require('./src/imageProcess');
 const ImageRecognition = require('./src/imageRecognition');
 const LoginModule = require('./src/loginModule');
+const PipelineTrigger = require('./src/pipelineTrigger');
 
 class MainProcessor {
     constructor() {
@@ -13,6 +14,7 @@ class MainProcessor {
         this.imageProcessor = new ImageProcessor();
         this.imageRecognition = new ImageRecognition();
         this.loginModule = new LoginModule();
+        this.pipelineTrigger = new PipelineTrigger();
     }
 
     async writeUuidToEnv(uuid) {
@@ -91,6 +93,19 @@ class MainProcessor {
                 }
             }
             
+            // 步骤6: 触发流水线
+            let pipelineResult = null;
+            if (loginResult) {
+                console.log('\n🚀 步骤6: 触发流水线...');
+                try {
+                    const requestDataPath = path.join(__dirname, 'pipelineRequestData.json');
+                    pipelineResult = await this.pipelineTrigger.triggerPipeline(process.env.ACCESS_TOKEN, requestDataPath);
+                    console.log(`✅ 流水线触发成功: ${pipelineResult.data}`);
+                } catch (error) {
+                    console.log(`❌ 流水线触发失败: ${error.message}`);
+                }
+            }
+            
             console.log('\n✅ 流程完成！');
             
             return {
@@ -98,7 +113,8 @@ class MainProcessor {
                 imagePath: imagePath,
                 invertedPath: processResult.invertedPath,
                 recognitionResult: geminiResult,
-                loginResult: loginResult
+                loginResult: loginResult,
+                pipelineResult: pipelineResult
             };
             
         } catch (error) {
