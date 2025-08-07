@@ -44,6 +44,7 @@ Thumbs.db
 dist/
 build/
 out/
+captcha/
 
 
 # Image processing outputs
